@@ -11,7 +11,7 @@ public class DatabaseConnection {
     private DatabaseConnection() throws SQLException {
         try {
 
-            String url = "jdbc:postgresql://localhost:5432/EcoMove";
+            String url = "jdbc:postgresql://localhost:5432/ecomove";
             String username = "postgres";
             String password = "2002";
             this.connection = DriverManager.getConnection(url, username, password);
