@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class Billet {
     private UUID id;
-    private UUID idContrat; // Ajout de l'attribut idContrat
+    private UUID idContrat;
     private TypeTransport typeTransport;
     private BigDecimal prixAchat;
     private BigDecimal prixVente;
@@ -82,5 +82,18 @@ public class Billet {
 
     public void setStatutBillet(StatutBillet statutBillet) {
         this.statutBillet = statutBillet;
+    }
+
+    @Override
+    public String toString() {
+        return "Billet{" +
+                "id=" + id +
+                ", idContrat=" + idContrat +
+                ", typeTransport=" + typeTransport +
+                ", prixAchat=" + prixAchat +
+                ", prixVente=" + prixVente +
+                ", dateVente=" + dateVente +
+                ", statutBillet=" + statutBillet +
+                '}';
     }
 }

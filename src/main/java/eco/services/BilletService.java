@@ -21,28 +21,28 @@ public class BilletService {
     }
 
     public void addBillet(Billet billet) throws SQLException {
-        String query = "INSERT INTO billets (id, id_contrat, type_transport, prix_achat, prix_vente, date_vente, statut_billet) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO billets (id, id_contrat, type_transport, prix_achat, prix_vente, date_vente, statut_billet) VALUES (?, ?, CAST(? AS type_transport), ?, ?, ?, CAST(? AS statut_billet))";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, billet.getId());
-            stmt.setObject(2, billet.getIdContrat()); // Ajout de idContrat
-            stmt.setString(3, billet.getTypeTransport().name());
+            stmt.setObject(2, billet.getIdContrat());
+            stmt.setString(3, billet.getTypeTransport().toString().toLowerCase());
             stmt.setBigDecimal(4, billet.getPrixAchat());
             stmt.setBigDecimal(5, billet.getPrixVente());
             stmt.setDate(6, new java.sql.Date(billet.getDateVente().getTime()));
-            stmt.setString(7, billet.getStatutBillet().name());
+            stmt.setString(7, billet.getStatutBillet().toString().toLowerCase());
             stmt.executeUpdate();
         }
     }
 
     public void updateBillet(Billet billet) throws SQLException {
-        String query = "UPDATE billets SET id_contrat = ?, type_transport = ?, prix_achat = ?, prix_vente = ?, date_vente = ?, statut_billet = ? WHERE id = ?";
+        String query = "UPDATE billets SET id_contrat = ?, type_transport = CAST(? AS type_transport), prix_achat = ?, prix_vente = ?, date_vente = ?, statut_billet = CAST(? AS statut_billet) WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setObject(1, billet.getIdContrat()); // Mise à jour de idContrat
-            stmt.setString(2, billet.getTypeTransport().name());
+            stmt.setObject(1, billet.getIdContrat());
+            stmt.setString(2, billet.getTypeTransport().name().toLowerCase());
             stmt.setBigDecimal(3, billet.getPrixAchat());
             stmt.setBigDecimal(4, billet.getPrixVente());
             stmt.setDate(5, new java.sql.Date(billet.getDateVente().getTime()));
-            stmt.setString(6, billet.getStatutBillet().name());
+            stmt.setString(6, billet.getStatutBillet().name().toLowerCase());
             stmt.setObject(7, billet.getId());
             stmt.executeUpdate();
         }
@@ -64,7 +64,7 @@ public class BilletService {
             if (rs.next()) {
                 return new Billet(
                         (UUID) rs.getObject("id"),
-                        (UUID) rs.getObject("id_contrat"), // Récupération de idContrat
+                        (UUID) rs.getObject("id_contrat"),
                         TypeTransport.valueOf(rs.getString("type_transport")),
                         rs.getBigDecimal("prix_achat"),
                         rs.getBigDecimal("prix_vente"),
@@ -84,12 +84,12 @@ public class BilletService {
             while (rs.next()) {
                 billets.add(new Billet(
                         (UUID) rs.getObject("id"),
-                        (UUID) rs.getObject("id_contrat"), // Récupération de idContrat
-                        TypeTransport.valueOf(rs.getString("type_transport")),
+                        (UUID) rs.getObject("id_contrat"),
+                        TypeTransport.valueOf(rs.getString("type_transport").toUpperCase()),
                         rs.getBigDecimal("prix_achat"),
                         rs.getBigDecimal("prix_vente"),
                         rs.getDate("date_vente"),
-                        StatutBillet.valueOf(rs.getString("statut_billet"))
+                        StatutBillet.valueOf(rs.getString("statut_billet").toUpperCase())
                 ));
             }
         }
