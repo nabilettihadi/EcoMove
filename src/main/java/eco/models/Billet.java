@@ -9,15 +9,17 @@ import java.util.UUID;
 
 public class Billet {
     private UUID id;
+    private UUID idContrat; // Ajout de l'attribut idContrat
     private TypeTransport typeTransport;
     private BigDecimal prixAchat;
     private BigDecimal prixVente;
     private Date dateVente;
     private StatutBillet statutBillet;
 
-    public Billet(UUID id, TypeTransport typeTransport, BigDecimal prixAchat, BigDecimal prixVente,
+    public Billet(UUID id, UUID idContrat, TypeTransport typeTransport, BigDecimal prixAchat, BigDecimal prixVente,
                   Date dateVente, StatutBillet statutBillet) {
         this.id = id;
+        this.idContrat = idContrat;
         this.typeTransport = typeTransport;
         this.prixAchat = prixAchat;
         this.prixVente = prixVente;
@@ -32,6 +34,14 @@ public class Billet {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getIdContrat() {
+        return idContrat;
+    }
+
+    public void setIdContrat(UUID idContrat) {
+        this.idContrat = idContrat;
     }
 
     public TypeTransport getTypeTransport() {

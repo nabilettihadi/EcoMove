@@ -14,8 +14,9 @@ public class Contrat {
     private String conditionsAccord;
     private boolean renouvelable;
     private StatutContrat statutContrat;
+    private UUID partenaireId;
 
-    public Contrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat) {
+    public Contrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) {
         this.id = id;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
@@ -23,6 +24,7 @@ public class Contrat {
         this.conditionsAccord = conditionsAccord;
         this.renouvelable = renouvelable;
         this.statutContrat = statutContrat;
+        this.partenaireId = partenaireId;
     }
 
     public UUID getId() {
@@ -81,6 +83,14 @@ public class Contrat {
         this.statutContrat = statutContrat;
     }
 
+    public UUID getPartenaireId() {
+        return partenaireId;
+    }
+
+    public void setPartenaireId(UUID partenaireId) {
+        this.partenaireId = partenaireId;
+    }
+
     @Override
     public String toString() {
         return "Contrat{" +
@@ -91,6 +101,7 @@ public class Contrat {
                 ", conditionsAccord='" + conditionsAccord + '\'' +
                 ", renouvelable=" + renouvelable +
                 ", statutContrat=" + statutContrat +
+                ", partenaireId=" + partenaireId +
                 '}';
     }
 }

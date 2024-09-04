@@ -1,7 +1,9 @@
 package main.java.eco.views;
 
 import main.java.eco.models.Contrat;
+import main.java.eco.models.Partenaire;
 import main.java.eco.services.ContratService;
+import main.java.eco.services.PartenaireService;
 import main.java.eco.models.enums.StatutContrat;
 
 import java.math.BigDecimal;
@@ -9,16 +11,19 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ContratView {
 
     private final ContratService contratService;
+    private final PartenaireService partenaireService;
     private final SimpleDateFormat dateFormat;
 
     public ContratView() throws SQLException {
         this.contratService = new ContratService();
+        this.partenaireService = new PartenaireService();
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     }
 
@@ -40,95 +45,110 @@ public class ContratView {
             switch (choice) {
                 case 1:
                     try {
-                        contratService.addContrat(saisirContrat());
-                    } catch (Exception e) {
-                        System.out.println("Erreur lors de l'ajout du contrat : " + e.getMessage());
+                        Contrat contrat = saisirContrat();
+                        contratService.addContrat(contrat);
+                        System.out.println("Contrat ajouté avec succès !");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("Erreur lors de l'ajout du contrat.");
                     }
                     break;
                 case 2:
-                    System.out.print("Entrez l'ID du Contrat à modifier (UUID): ");
-                    UUID id = UUID.fromString(scanner.nextLine());
                     try {
-                        Contrat contrat = saisirContrat();
-                        contrat.setId(id);
-                        contratService.updateContrat(contrat);
-                    } catch (Exception e) {
-                        System.out.println("Erreur lors de la modification du contrat : " + e.getMessage());
+                        System.out.print("Entrez l'ID du contrat à modifier: ");
+                        UUID id = UUID.fromString(scanner.nextLine());
+                        Contrat contrat = contratService.getContrat(id);
+                        if (contrat != null) {
+                            System.out.println("Contrat trouvé : " + contrat);
+                            Contrat updatedContrat = saisirContrat();
+                            updatedContrat.setId(id);
+                            contratService.updateContrat(updatedContrat);
+                            System.out.println("Contrat modifié avec succès !");
+                        } else {
+                            System.out.println("Contrat non trouvé.");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("Erreur lors de la modification du contrat.");
                     }
                     break;
                 case 3:
-                    System.out.print("Entrez l'ID du Contrat à supprimer (UUID): ");
-                    UUID idToDelete = UUID.fromString(scanner.nextLine());
                     try {
-                        contratService.deleteContrat(idToDelete);
-                    } catch (Exception e) {
-                        System.out.println("Erreur lors de la suppression du contrat : " + e.getMessage());
+                        System.out.print("Entrez l'ID du contrat à supprimer: ");
+                        UUID id = UUID.fromString(scanner.nextLine());
+                        contratService.deleteContrat(id);
+                        System.out.println("Contrat supprimé avec succès !");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("Erreur lors de la suppression du contrat.");
                     }
                     break;
                 case 4:
                     try {
-                        contratService.getAllContrats().forEach(System.out::println);
+                        List<Contrat> contrats = contratService.getAllContrats();
+                        for (Contrat contrat : contrats) {
+                            System.out.println(contrat);
+                        }
                     } catch (SQLException e) {
-                        System.out.println("Erreur lors de l'affichage des contrats : " + e.getMessage());
+                        e.printStackTrace();
+                        System.out.println("Erreur lors de l'affichage des contrats.");
                     }
                     break;
                 case 0:
-                    System.out.println("Retour...");
+                    System.out.println("Retour au menu principal.");
                     break;
                 default:
-                    System.out.println("Choix invalide. Veuillez réessayer.");
+                    System.out.println("Option invalide. Essayez encore.");
+                    break;
             }
         }
     }
 
-    private Contrat saisirContrat() {
+    private Contrat saisirContrat() throws SQLException {
         Scanner scanner = new Scanner(System.in);
-        UUID id = UUID.randomUUID();
-        Date dateDebut = saisirDate("date de début (yyyy-MM-dd)");
-        Date dateFin = saisirDate("date de fin (yyyy-MM-dd)");
-        BigDecimal tarifSpecial = saisirBigDecimal("tarif spécial");
-        System.out.print("Conditions d'accord: ");
+
+        UUID id = UUID.randomUUID(); // Vous pouvez générer un UUID si nécessaire
+
+        System.out.print("Entrez la date de début (yyyy-MM-dd): ");
+        Date dateDebut = parseDate(scanner.nextLine());
+
+        System.out.print("Entrez la date de fin (yyyy-MM-dd): ");
+        Date dateFin = parseDate(scanner.nextLine());
+
+        System.out.print("Entrez le tarif spécial: ");
+        BigDecimal tarifSpecial = new BigDecimal(scanner.nextLine());
+
+        System.out.print("Entrez les conditions d'accord: ");
         String conditionsAccord = scanner.nextLine();
-        System.out.print("Renouvelable (true/false): ");
+
+        System.out.print("Le contrat est renouvelable (true/false): ");
         boolean renouvelable = scanner.nextBoolean();
-        scanner.nextLine();  // Consume newline
-        System.out.print("Statut du contrat (EN_COURS, TERMINE, SUSPENDU): ");
-        StatutContrat statutContrat = StatutContrat.valueOf(scanner.nextLine().toUpperCase());
+        scanner.nextLine(); // Consume newline
 
-        return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat);
+        System.out.print("Entrez le statut du contrat (1: EN_COURS, 2: TERMINE, 3: SUSPENDU): ");
+        int statut = scanner.nextInt();
+        StatutContrat statutContrat = StatutContrat.fromInt(statut);
+
+        // Choisir le partenaire
+        List<Partenaire> partenaires = partenaireService.getAllPartenaires();
+        System.out.println("=== Choisir un Partenaire ===");
+        for (int i = 0; i < partenaires.size(); i++) {
+            System.out.println((i + 1) + ". " + partenaires.get(i).getNomCompagnie());
+        }
+        System.out.print("Choisissez un partenaire par numéro: ");
+        int partenaireIndex = scanner.nextInt() - 1;
+        scanner.nextLine(); // Consume newline
+        Partenaire partenaire = partenaires.get(partenaireIndex);
+
+        return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire.getId());
     }
 
-    private Date saisirDate(String prompt) {
-        Date date = null;
-        boolean valid = false;
-
-        while (!valid) {
-            System.out.print("Entrez la " + prompt + ": ");
-            String dateString = new Scanner(System.in).nextLine();
-            try {
-                date = dateFormat.parse(dateString);
-                valid = true;
-            } catch (ParseException e) {
-                System.out.println("Format de date invalide. Veuillez réessayer.");
-            }
+    private Date parseDate(String dateString) {
+        try {
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
         }
-        return date;
-    }
-
-    private BigDecimal saisirBigDecimal(String prompt) {
-        BigDecimal value = null;
-        boolean valid = false;
-
-        while (!valid) {
-            System.out.print("Entrez le " + prompt + ": ");
-            String input = new Scanner(System.in).nextLine();
-            try {
-                value = new BigDecimal(input);
-                valid = true;
-            } catch (NumberFormatException e) {
-                System.out.println("Format invalide. Veuillez entrer un nombre valide.");
-            }
-        }
-        return value;
     }
 }

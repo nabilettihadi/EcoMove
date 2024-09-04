@@ -6,10 +6,7 @@ import main.java.eco.models.enums.StatutOffre;
 import main.java.eco.models.enums.TypeReduction;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,33 +19,36 @@ public class OffrePromotionnelleService {
     }
 
     public void addOffre(OffrePromotionnelle offre) throws SQLException {
-        String query = "INSERT INTO offres_promotionnelles (id, nom_offre, description, date_debut, date_fin, type_reduction, valeur_reduction, conditions, statut_offre) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO offres_promotionnelles (id, nom_offre, description, date_debut, date_fin, type_reduction, valeur_reduction, conditions, statut_offre, id_contrat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, offre.getId());
             stmt.setString(2, offre.getNomOffre());
             stmt.setString(3, offre.getDescription());
             stmt.setDate(4, new java.sql.Date(offre.getDateDebut().getTime()));
             stmt.setDate(5, new java.sql.Date(offre.getDateFin().getTime()));
-            stmt.setString(6, offre.getTypeReduction().name());
+            stmt.setObject(6, offre.getTypeReduction(), java.sql.Types.OTHER);  // Passage de l'énumération en tant que type `OTHER`
             stmt.setBigDecimal(7, offre.getValeurReduction());
             stmt.setString(8, offre.getConditions());
-            stmt.setString(9, offre.getStatutOffre().name());
+            stmt.setObject(9, offre.getStatutOffre().toString().toLowerCase(), java.sql.Types.OTHER); // Passage de l'énumération en tant que type `OTHER`
+            stmt.setObject(10, offre.getIdContrat());
             stmt.executeUpdate();
         }
     }
 
+
     public void updateOffre(UUID id, OffrePromotionnelle offre) throws SQLException {
-        String query = "UPDATE offres_promotionnelles SET nom_offre = ?, description = ?, date_debut = ?, date_fin = ?, type_reduction = ?, valeur_reduction = ?, conditions = ?, statut_offre = ? WHERE id = ?";
+        String query = "UPDATE offres_promotionnelles SET nom_offre = ?, description = ?, date_debut = ?, date_fin = ?, type_reduction = ?, valeur_reduction = ?, conditions = ?, statut_offre = ?, id_contrat = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, offre.getNomOffre());
             stmt.setString(2, offre.getDescription());
             stmt.setDate(3, new java.sql.Date(offre.getDateDebut().getTime()));
             stmt.setDate(4, new java.sql.Date(offre.getDateFin().getTime()));
-            stmt.setString(5, offre.getTypeReduction().name());
+            stmt.setObject(5, offre.getTypeReduction(), java.sql.Types.OTHER);
             stmt.setBigDecimal(6, offre.getValeurReduction());
             stmt.setString(7, offre.getConditions());
-            stmt.setString(8, offre.getStatutOffre().name());
-            stmt.setObject(9, id);
+            stmt.setObject(8, offre.getStatutOffre().toString().toLowerCase(), java.sql.Types.OTHER);
+            stmt.setObject(9, offre.getIdContrat());
+            stmt.setObject(10, id);
             stmt.executeUpdate();
         }
     }
@@ -65,29 +65,31 @@ public class OffrePromotionnelleService {
         String query = "SELECT * FROM offres_promotionnelles WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new OffrePromotionnelle(
-                        (UUID) rs.getObject("id"),
-                        rs.getString("nom_offre"),
-                        rs.getString("description"),
-                        rs.getDate("date_debut"),
-                        rs.getDate("date_fin"),
-                        TypeReduction.valueOf(rs.getString("type_reduction")),
-                        rs.getBigDecimal("valeur_reduction"),
-                        rs.getString("conditions"),
-                        StatutOffre.valueOf(rs.getString("statut_offre"))
-                );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new OffrePromotionnelle(
+                            (UUID) rs.getObject("id"),
+                            rs.getString("nom_offre"),
+                            rs.getString("description"),
+                            rs.getDate("date_debut"),
+                            rs.getDate("date_fin"),
+                            TypeReduction.valueOf(rs.getString("type_reduction")),
+                            rs.getBigDecimal("valeur_reduction"),
+                            rs.getString("conditions"),
+                            StatutOffre.valueOf(rs.getString("statut_offre").toUpperCase()),
+                            (UUID) rs.getObject("id_contrat")
+                    );
+                }
             }
-            return null;
         }
+        return null;
     }
 
     public List<OffrePromotionnelle> getAllOffres() throws SQLException {
         List<OffrePromotionnelle> offres = new ArrayList<>();
         String query = "SELECT * FROM offres_promotionnelles";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 offres.add(new OffrePromotionnelle(
                         (UUID) rs.getObject("id"),
@@ -98,7 +100,8 @@ public class OffrePromotionnelleService {
                         TypeReduction.valueOf(rs.getString("type_reduction")),
                         rs.getBigDecimal("valeur_reduction"),
                         rs.getString("conditions"),
-                        StatutOffre.valueOf(rs.getString("statut_offre"))
+                        StatutOffre.valueOf(rs.getString("statut_offre").toUpperCase()),
+                        (UUID) rs.getObject("id_contrat")
                 ));
             }
         }

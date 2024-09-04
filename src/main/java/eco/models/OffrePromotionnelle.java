@@ -4,7 +4,7 @@ import main.java.eco.models.enums.StatutOffre;
 import main.java.eco.models.enums.TypeReduction;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 public class OffrePromotionnelle {
@@ -17,13 +17,11 @@ public class OffrePromotionnelle {
     private BigDecimal valeurReduction;
     private String conditions;
     private StatutOffre statutOffre;
-
-    public OffrePromotionnelle(UUID id) {
-        this.id = id;
-    }
+    private UUID idContrat;
 
     public OffrePromotionnelle(UUID id, String nomOffre, String description, Date dateDebut, Date dateFin,
-                               TypeReduction typeReduction, BigDecimal valeurReduction, String conditions, StatutOffre statutOffre) {
+                               TypeReduction typeReduction, BigDecimal valeurReduction, String conditions,
+                               StatutOffre statutOffre, UUID idContrat) {
         this.id = id;
         this.nomOffre = nomOffre;
         this.description = description;
@@ -33,9 +31,11 @@ public class OffrePromotionnelle {
         this.valeurReduction = valeurReduction;
         this.conditions = conditions;
         this.statutOffre = statutOffre;
+        this.idContrat = idContrat;
     }
 
-    // Getters and setters
+    // Getters and Setters
+
     public UUID getId() {
         return id;
     }
@@ -108,6 +108,14 @@ public class OffrePromotionnelle {
         this.statutOffre = statutOffre;
     }
 
+    public UUID getIdContrat() {
+        return idContrat;
+    }
+
+    public void setIdContrat(UUID idContrat) {
+        this.idContrat = idContrat;
+    }
+
     @Override
     public String toString() {
         return "OffrePromotionnelle{" +
@@ -120,6 +128,7 @@ public class OffrePromotionnelle {
                 ", valeurReduction=" + valeurReduction +
                 ", conditions='" + conditions + '\'' +
                 ", statutOffre=" + statutOffre +
+                ", idContrat=" + idContrat +
                 '}';
     }
 }

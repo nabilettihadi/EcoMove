@@ -2,10 +2,15 @@ package main.java.eco.services;
 
 import main.java.eco.db.DatabaseConnection;
 import main.java.eco.models.Contrat;
+import main.java.eco.models.Partenaire;
 import main.java.eco.models.enums.StatutContrat;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,29 +23,31 @@ public class ContratService {
     }
 
     public void addContrat(Contrat contrat) throws SQLException {
-        String query = "INSERT INTO contrats (id, date_debut, date_fin, tarif_special, conditions_accord, renouvelable, statut_contrat) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO contrats (id, date_debut, date_fin, tarif_special, conditions_accord, renouvelable, statut_contrat, id_partenaire) VALUES (?, ?, ?, ?, ?, ?, ?::statut_contrat, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setObject(1, contrat.getId()); // UUID
-            stmt.setDate(2, new java.sql.Date(contrat.getDateDebut().getTime())); // Date
-            stmt.setDate(3, new java.sql.Date(contrat.getDateFin().getTime())); // Date
-            stmt.setBigDecimal(4, contrat.getTarifSpecial()); // BigDecimal
-            stmt.setString(5, contrat.getConditionsAccord()); // String
-            stmt.setBoolean(6, contrat.isRenouvelable()); // Boolean
-            stmt.setObject(7, contrat.getStatutContrat().name(), Types.OTHER); // Enum
+            stmt.setObject(1, contrat.getId());
+            stmt.setDate(2, new Date(contrat.getDateDebut().getTime()));
+            stmt.setDate(3, new Date(contrat.getDateFin().getTime()));
+            stmt.setBigDecimal(4, contrat.getTarifSpecial());
+            stmt.setString(5, contrat.getConditionsAccord());
+            stmt.setBoolean(6, contrat.isRenouvelable());
+            stmt.setString(7, contrat.getStatutContrat().name().toLowerCase());
+            stmt.setObject(8, contrat.getPartenaireId()); // Utilisez id_partenaire
             stmt.executeUpdate();
         }
     }
 
     public void updateContrat(Contrat contrat) throws SQLException {
-        String query = "UPDATE contrats SET date_debut = ?, date_fin = ?, tarif_special = ?, conditions_accord = ?, renouvelable = ?, statut_contrat = ? WHERE id = ?";
+        String query = "UPDATE contrats SET date_debut = ?, date_fin = ?, tarif_special = ?, conditions_accord = ?, renouvelable = ?, statut_contrat = ?::statut_contrat, id_partenaire = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new java.sql.Date(contrat.getDateDebut().getTime())); // Date
-            stmt.setDate(2, new java.sql.Date(contrat.getDateFin().getTime())); // Date
-            stmt.setBigDecimal(3, contrat.getTarifSpecial()); // BigDecimal
-            stmt.setString(4, contrat.getConditionsAccord()); // String
-            stmt.setBoolean(5, contrat.isRenouvelable()); // Boolean
-            stmt.setObject(6, contrat.getStatutContrat().name(), Types.OTHER); // Enum
-            stmt.setObject(7, contrat.getId()); // UUID
+            stmt.setDate(1, new Date(contrat.getDateDebut().getTime()));
+            stmt.setDate(2, new Date(contrat.getDateFin().getTime()));
+            stmt.setBigDecimal(3, contrat.getTarifSpecial());
+            stmt.setString(4, contrat.getConditionsAccord());
+            stmt.setBoolean(5, contrat.isRenouvelable());
+            stmt.setString(6, contrat.getStatutContrat().name().toLowerCase());
+            stmt.setObject(7, contrat.getPartenaireId()); // Utilisez id_partenaire
+            stmt.setObject(8, contrat.getId());
             stmt.executeUpdate();
         }
     }
@@ -66,7 +73,8 @@ public class ContratService {
                         rs.getBigDecimal("tarif_special"),
                         rs.getString("conditions_accord"),
                         rs.getBoolean("renouvelable"),
-                        StatutContrat.valueOf(rs.getString("statut_contrat"))
+                        StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
+                        (UUID) rs.getObject("id_partenaire") // Utilisez id_partenaire
                 );
             }
             return null;
@@ -86,7 +94,8 @@ public class ContratService {
                         rs.getBigDecimal("tarif_special"),
                         rs.getString("conditions_accord"),
                         rs.getBoolean("renouvelable"),
-                        StatutContrat.valueOf(rs.getString("statut_contrat"))
+                        StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
+                        (UUID) rs.getObject("id_partenaire") // Utilisez id_partenaire
                 ));
             }
         }

@@ -26,7 +26,7 @@ public class BilletView {
         int choice = -1;
 
         while (choice != 0) {
-            System.out.println("=== Suivi des Billets Partenaires ===");
+            System.out.println("=== Suivi des Billets ===");
             System.out.println("1. Ajouter un Billet");
             System.out.println("2. Modifier un Billet");
             System.out.println("3. Supprimer un Billet");
@@ -83,6 +83,9 @@ public class BilletView {
         System.out.print("ID (UUID): ");
         UUID id = UUID.fromString(scanner.next());
 
+        System.out.print("ID Contrat (UUID): ");
+        UUID idContrat = UUID.fromString(scanner.next());
+
         System.out.print("Type de transport (ex: BUS, TRAIN): ");
         String typeTransport = scanner.next();
 
@@ -104,12 +107,15 @@ public class BilletView {
         System.out.print("Statut (VALID/INVALID): ");
         String statut = scanner.next().toUpperCase();
 
-        return new Billet(id, TypeTransport.valueOf(typeTransport), prixAchat, prixVente, dateVente, StatutBillet.valueOf(statut));
+        return new Billet(id, idContrat, TypeTransport.valueOf(typeTransport), prixAchat, prixVente, dateVente, StatutBillet.valueOf(statut));
     }
 
     private Billet saisirBillet(UUID id) {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.print("ID Contrat (UUID): ");
+        UUID idContrat = UUID.fromString(scanner.next());
+
         System.out.print("Type de transport (ex: BUS, TRAIN): ");
         String typeTransport = scanner.next();
 
@@ -131,6 +137,6 @@ public class BilletView {
         System.out.print("Statut (VALID/INVALID): ");
         String statut = scanner.next().toUpperCase();
 
-        return new Billet(id, TypeTransport.valueOf(typeTransport), prixAchat, prixVente, dateVente, StatutBillet.valueOf(statut));
+        return new Billet(id, idContrat, TypeTransport.valueOf(typeTransport), prixAchat, prixVente, dateVente, StatutBillet.valueOf(statut));
     }
 }
