@@ -30,7 +30,7 @@ public class OffrePromotionnelleView {
             System.out.println("5. Quitter");
             System.out.print("Choisissez une option : ");
             int choix = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choix) {
                 case 1:
@@ -89,20 +89,20 @@ public class OffrePromotionnelleView {
 
         System.out.print("Entrez la valeur de la réduction : ");
         BigDecimal valeurReduction = scanner.nextBigDecimal();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         System.out.print("Entrez les conditions de l'offre : ");
         String conditions = scanner.nextLine();
 
         System.out.print("Choisissez le statut de l'offre (1 pour ACTIVE, 2 pour EXPIREE, 3 pour SUSPENDUE) : ");
         StatutOffre statutOffre = StatutOffre.values()[scanner.nextInt() - 1];
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         System.out.print("Choisissez l'ID du contrat : ");
         UUID idContrat = UUID.fromString(scanner.nextLine());
 
         OffrePromotionnelle offre = new OffrePromotionnelle(
-                UUID.randomUUID(), // Génère un nouvel UUID pour l'offre
+                UUID.randomUUID(),
                 nomOffre,
                 description,
                 dateDebut,

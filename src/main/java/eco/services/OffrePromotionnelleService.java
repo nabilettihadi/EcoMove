@@ -29,10 +29,10 @@ public class OffrePromotionnelleService {
             stmt.setString(3, offre.getDescription());
             stmt.setDate(4, new java.sql.Date(offre.getDateDebut().getTime()));
             stmt.setDate(5, new java.sql.Date(offre.getDateFin().getTime()));
-            stmt.setObject(6, offre.getTypeReduction(), java.sql.Types.OTHER);  // Passage de l'énumération en tant que type `OTHER`
+            stmt.setObject(6, offre.getTypeReduction(), java.sql.Types.OTHER);
             stmt.setBigDecimal(7, offre.getValeurReduction());
             stmt.setString(8, offre.getConditions());
-            stmt.setObject(9, offre.getStatutOffre().toString().toLowerCase(), java.sql.Types.OTHER); // Passage de l'énumération en tant que type `OTHER`
+            stmt.setObject(9, offre.getStatutOffre().toString().toLowerCase(), java.sql.Types.OTHER);
             stmt.setObject(10, offre.getIdContrat());
             stmt.executeUpdate();
         }

@@ -5,7 +5,7 @@ public enum StatutContrat {
     TERMINE,
     SUSPENDU;
 
-    // Méthode pour obtenir l'enum à partir d'un entier
+
     public static StatutContrat fromInt(int i) {
         switch (i) {
             case 1:

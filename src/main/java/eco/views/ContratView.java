@@ -40,7 +40,7 @@ public class ContratView {
             System.out.println("0. Retour");
             System.out.print("Choisissez une option: ");
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -107,8 +107,7 @@ public class ContratView {
     private Contrat saisirContrat() throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
-        UUID id = UUID.randomUUID(); // Vous pouvez générer un UUID si nécessaire
-
+        UUID id = UUID.randomUUID();
         System.out.print("Entrez la date de début (yyyy-MM-dd): ");
         Date dateDebut = parseDate(scanner.nextLine());
 
@@ -123,13 +122,13 @@ public class ContratView {
 
         System.out.print("Le contrat est renouvelable (true/false): ");
         boolean renouvelable = scanner.nextBoolean();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         System.out.print("Entrez le statut du contrat (1: EN_COURS, 2: TERMINE, 3: SUSPENDU): ");
         int statut = scanner.nextInt();
         StatutContrat statutContrat = StatutContrat.fromInt(statut);
 
-        // Choisir le partenaire
+
         List<Partenaire> partenaires = partenaireService.getAllPartenaires();
         System.out.println("=== Choisir un Partenaire ===");
         for (int i = 0; i < partenaires.size(); i++) {
@@ -137,7 +136,7 @@ public class ContratView {
         }
         System.out.print("Choisissez un partenaire par numéro: ");
         int partenaireIndex = scanner.nextInt() - 1;
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         Partenaire partenaire = partenaires.get(partenaireIndex);
 
         return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire.getId());

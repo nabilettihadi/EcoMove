@@ -35,7 +35,7 @@ public class BilletView {
             System.out.println("0. Retour");
             System.out.print("Choisissez une option: ");
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -84,7 +84,7 @@ public class BilletView {
         System.out.print("Entrez l'ID du Contrat (UUID): ");
         UUID idContrat = UUID.fromString(scanner.nextLine());
 
-        // Choix du Type de Transport
+
         System.out.println("Choisissez le Type de Transport :");
         System.out.println("1. AVION");
         System.out.println("2. TRAIN");
@@ -121,7 +121,7 @@ public class BilletView {
             System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
         }
 
-        // Choix du Statut du Billet
+
         System.out.println("Choisissez le Statut du Billet :");
         System.out.println("1. VENDU");
         System.out.println("2. ANNULE");
@@ -153,7 +153,7 @@ public class BilletView {
         System.out.print("Entrez l'ID du Contrat (UUID): ");
         UUID idContrat = UUID.fromString(scanner.nextLine());
 
-        // Choix du Type de Transport
+
         System.out.println("Choisissez le Type de Transport :");
         System.out.println("1. AVION");
         System.out.println("2. TRAIN");
@@ -190,7 +190,7 @@ public class BilletView {
             System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
         }
 
-        // Choix du Statut du Billet
+
         System.out.println("Choisissez le Statut du Billet :");
         System.out.println("1. VENDU");
         System.out.println("2. ANNULE");

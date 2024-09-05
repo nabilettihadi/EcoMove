@@ -35,7 +35,7 @@ public class ContratService {
             stmt.setString(5, contrat.getConditionsAccord());
             stmt.setBoolean(6, contrat.isRenouvelable());
             stmt.setString(7, contrat.getStatutContrat().name().toLowerCase());
-            stmt.setObject(8, contrat.getPartenaireId()); // Utilisez id_partenaire
+            stmt.setObject(8, contrat.getPartenaireId());
             stmt.executeUpdate();
         }
     }
@@ -52,7 +52,7 @@ public class ContratService {
             stmt.setString(4, contrat.getConditionsAccord());
             stmt.setBoolean(5, contrat.isRenouvelable());
             stmt.setString(6, contrat.getStatutContrat().name().toLowerCase());
-            stmt.setObject(7, contrat.getPartenaireId()); // Utilisez id_partenaire
+            stmt.setObject(7, contrat.getPartenaireId());
             stmt.setObject(8, contrat.getId());
             stmt.executeUpdate();
         }
@@ -80,7 +80,7 @@ public class ContratService {
                         rs.getString("conditions_accord"),
                         rs.getBoolean("renouvelable"),
                         StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
-                        (UUID) rs.getObject("id_partenaire") // Utilisez id_partenaire
+                        (UUID) rs.getObject("id_partenaire")
                 );
             }
             return null;
@@ -101,7 +101,7 @@ public class ContratService {
                         rs.getString("conditions_accord"),
                         rs.getBoolean("renouvelable"),
                         StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
-                        (UUID) rs.getObject("id_partenaire") // Utilisez id_partenaire
+                        (UUID) rs.getObject("id_partenaire")
                 ));
             }
         }

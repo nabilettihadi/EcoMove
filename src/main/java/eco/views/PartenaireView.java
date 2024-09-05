@@ -35,7 +35,7 @@ public class PartenaireView {
 
             try {
                 choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                scanner.nextLine();
 
                 switch (choice) {
                     case 1:
@@ -68,7 +68,7 @@ public class PartenaireView {
                 }
             } catch (InputMismatchException | IllegalArgumentException e) {
                 System.out.println("Entrée invalide. Veuillez entrer un nombre valide.");
-                scanner.nextLine(); // Consume the invalid input
+                scanner.nextLine();
             } catch (SQLException e) {
                 System.out.println("Erreur SQL : " + e.getMessage());
             }
