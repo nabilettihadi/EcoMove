@@ -23,6 +23,9 @@ public class ContratService {
     }
 
     public void addContrat(Contrat contrat) throws SQLException {
+        if (contrat.getDateDebut().after(contrat.getDateFin())) {
+            throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
+        }
         String query = "INSERT INTO contrats (id, date_debut, date_fin, tarif_special, conditions_accord, renouvelable, statut_contrat, id_partenaire) VALUES (?, ?, ?, ?, ?, ?, ?::statut_contrat, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, contrat.getId());
@@ -38,6 +41,9 @@ public class ContratService {
     }
 
     public void updateContrat(Contrat contrat) throws SQLException {
+        if (contrat.getDateDebut().after(contrat.getDateFin())) {
+            throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
+        }
         String query = "UPDATE contrats SET date_debut = ?, date_fin = ?, tarif_special = ?, conditions_accord = ?, renouvelable = ?, statut_contrat = ?::statut_contrat, id_partenaire = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDate(1, new Date(contrat.getDateDebut().getTime()));

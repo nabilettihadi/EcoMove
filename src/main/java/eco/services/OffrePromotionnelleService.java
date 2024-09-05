@@ -19,6 +19,9 @@ public class OffrePromotionnelleService {
     }
 
     public void addOffre(OffrePromotionnelle offre) throws SQLException {
+        if (offre.getDateDebut().after(offre.getDateFin())) {
+            throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
+        }
         String query = "INSERT INTO offres_promotionnelles (id, nom_offre, description, date_debut, date_fin, type_reduction, valeur_reduction, conditions, statut_offre, id_contrat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, offre.getId());
@@ -37,6 +40,9 @@ public class OffrePromotionnelleService {
 
 
     public void updateOffre(UUID id, OffrePromotionnelle offre) throws SQLException {
+        if (offre.getDateDebut().after(offre.getDateFin())) {
+            throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
+        }
         String query = "UPDATE offres_promotionnelles SET nom_offre = ?, description = ?, date_debut = ?, date_fin = ?, type_reduction = ?, valeur_reduction = ?, conditions = ?, statut_offre = ?, id_contrat = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, offre.getNomOffre());
