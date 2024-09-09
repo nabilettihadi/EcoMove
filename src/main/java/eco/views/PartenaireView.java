@@ -1,9 +1,9 @@
 package main.java.eco.views;
 
 import main.java.eco.models.Partenaire;
-import main.java.eco.models.enums.StatutPartenaire;
-import main.java.eco.models.enums.TypeTransport;
-import main.java.eco.services.PartenaireService;
+import main.java.eco.enums.StatutPartenaire;
+import main.java.eco.enums.TypeTransport;
+import main.java.eco.dao.PartenaireDAO;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class PartenaireView {
 
-    private final PartenaireService partenaireService;
+    private final PartenaireDAO partenaireService;
 
     public PartenaireView() throws SQLException {
-        this.partenaireService = new PartenaireService();
+        this.partenaireService = new PartenaireDAO();
     }
 
     public void displayPartenaireMenu() {

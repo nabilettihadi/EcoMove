@@ -1,7 +1,7 @@
 package main.java.eco.models;
 
-import main.java.eco.models.enums.StatutBillet;
-import main.java.eco.models.enums.TypeTransport;
+import main.java.eco.enums.StatutBillet;
+import main.java.eco.enums.TypeTransport;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,17 +9,17 @@ import java.util.UUID;
 
 public class Billet {
     private UUID id;
-    private UUID idContrat;
+    private Contrat contrat;
     private TypeTransport typeTransport;
     private BigDecimal prixAchat;
     private BigDecimal prixVente;
     private Date dateVente;
     private StatutBillet statutBillet;
 
-    public Billet(UUID id, UUID idContrat, TypeTransport typeTransport, BigDecimal prixAchat, BigDecimal prixVente,
+    public Billet(UUID id, Contrat contrat, TypeTransport typeTransport, BigDecimal prixAchat, BigDecimal prixVente,
                   Date dateVente, StatutBillet statutBillet) {
         this.id = id;
-        this.idContrat = idContrat;
+        this.contrat = contrat;
         this.typeTransport = typeTransport;
         this.prixAchat = prixAchat;
         this.prixVente = prixVente;
@@ -36,12 +36,12 @@ public class Billet {
         this.id = id;
     }
 
-    public UUID getIdContrat() {
-        return idContrat;
+    public Contrat getContrat() {
+        return contrat;
     }
 
-    public void setIdContrat(UUID idContrat) {
-        this.idContrat = idContrat;
+    public void setContrat(Contrat contrat) {
+        this.contrat = contrat;
     }
 
     public TypeTransport getTypeTransport() {
@@ -88,7 +88,7 @@ public class Billet {
     public String toString() {
         return "Billet{" +
                 "id=" + id +
-                ", idContrat=" + idContrat +
+                ", contrat=" + contrat +
                 ", typeTransport=" + typeTransport +
                 ", prixAchat=" + prixAchat +
                 ", prixVente=" + prixVente +

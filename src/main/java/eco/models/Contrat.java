@@ -1,9 +1,9 @@
 package main.java.eco.models;
 
-import main.java.eco.models.enums.StatutContrat;
+import main.java.eco.enums.StatutContrat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 public class Contrat {
@@ -14,9 +14,11 @@ public class Contrat {
     private String conditionsAccord;
     private boolean renouvelable;
     private StatutContrat statutContrat;
-    private UUID partenaireId;
+    private Partenaire partenaire;
 
-    public Contrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) {
+    public Contrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial,
+                   String conditionsAccord, boolean renouvelable,
+                   StatutContrat statutContrat, Partenaire partenaire) {
         this.id = id;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
@@ -24,8 +26,10 @@ public class Contrat {
         this.conditionsAccord = conditionsAccord;
         this.renouvelable = renouvelable;
         this.statutContrat = statutContrat;
-        this.partenaireId = partenaireId;
+        this.partenaire = partenaire;
     }
+
+    // Getters et Setters
 
     public UUID getId() {
         return id;
@@ -83,12 +87,12 @@ public class Contrat {
         this.statutContrat = statutContrat;
     }
 
-    public UUID getPartenaireId() {
-        return partenaireId;
+    public Partenaire getPartenaire() {
+        return partenaire; // Retourne l'objet Partenaire
     }
 
-    public void setPartenaireId(UUID partenaireId) {
-        this.partenaireId = partenaireId;
+    public void setPartenaire(Partenaire partenaire) {
+        this.partenaire = partenaire; // Stockage de l'objet Partenaire
     }
 
     @Override
@@ -101,7 +105,7 @@ public class Contrat {
                 ", conditionsAccord='" + conditionsAccord + '\'' +
                 ", renouvelable=" + renouvelable +
                 ", statutContrat=" + statutContrat +
-                ", partenaireId=" + partenaireId +
+                ", partenaire=" + partenaire + // Affichage de l'objet Partenaire
                 '}';
     }
 }

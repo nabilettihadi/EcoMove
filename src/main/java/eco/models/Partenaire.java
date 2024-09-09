@@ -1,7 +1,7 @@
 package main.java.eco.models;
 
-import main.java.eco.models.enums.TypeTransport;
-import main.java.eco.models.enums.StatutPartenaire;
+import main.java.eco.enums.TypeTransport;
+import main.java.eco.enums.StatutPartenaire;
 
 import java.util.Date;
 import java.util.UUID;

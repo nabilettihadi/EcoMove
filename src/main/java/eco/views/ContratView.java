@@ -4,13 +4,13 @@ import main.java.eco.models.Contrat;
 import main.java.eco.models.Partenaire;
 import main.java.eco.services.ContratService;
 import main.java.eco.services.PartenaireService;
-import main.java.eco.models.enums.StatutContrat;
+import main.java.eco.enums.StatutContrat;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -46,7 +46,16 @@ public class ContratView {
                 case 1:
                     try {
                         Contrat contrat = saisirContrat();
-                        contratService.addContrat(contrat);
+                        contratService.addContrat(
+                                contrat.getId(),
+                                contrat.getDateDebut(),
+                                contrat.getDateFin(),
+                                contrat.getTarifSpecial(),
+                                contrat.getConditionsAccord(),
+                                contrat.isRenouvelable(),
+                                contrat.getStatutContrat(),
+                                contrat.getPartenaire().getId()
+                        );
                         System.out.println("Contrat ajouté avec succès !");
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -62,7 +71,16 @@ public class ContratView {
                             System.out.println("Contrat trouvé : " + contrat);
                             Contrat updatedContrat = saisirContrat();
                             updatedContrat.setId(id);
-                            contratService.updateContrat(updatedContrat);
+                            contratService.updateContrat(
+                                    updatedContrat.getId(),
+                                    updatedContrat.getDateDebut(),
+                                    updatedContrat.getDateFin(),
+                                    updatedContrat.getTarifSpecial(),
+                                    updatedContrat.getConditionsAccord(),
+                                    updatedContrat.isRenouvelable(),
+                                    updatedContrat.getStatutContrat(),
+                                    updatedContrat.getPartenaire().getId()
+                            );
                             System.out.println("Contrat modifié avec succès !");
                         } else {
                             System.out.println("Contrat non trouvé.");
@@ -126,8 +144,8 @@ public class ContratView {
 
         System.out.print("Entrez le statut du contrat (1: EN_COURS, 2: TERMINE, 3: SUSPENDU): ");
         int statut = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
         StatutContrat statutContrat = StatutContrat.fromInt(statut);
-
 
         List<Partenaire> partenaires = partenaireService.getAllPartenaires();
         System.out.println("=== Choisir un Partenaire ===");
@@ -136,15 +154,16 @@ public class ContratView {
         }
         System.out.print("Choisissez un partenaire par numéro: ");
         int partenaireIndex = scanner.nextInt() - 1;
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
         Partenaire partenaire = partenaires.get(partenaireIndex);
 
-        return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire.getId());
+        return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire);
     }
 
     private Date parseDate(String dateString) {
         try {
-            return dateFormat.parse(dateString);
+            java.util.Date utilDate = dateFormat.parse(dateString);
+            return new Date(utilDate.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
             return null;

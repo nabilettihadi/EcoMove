@@ -1,110 +1,70 @@
 package main.java.eco.services;
 
-import main.java.eco.db.DatabaseConnection;
+import main.java.eco.dao.ContratDAO;
+import main.java.eco.dao.PartenaireDAO;
 import main.java.eco.models.Contrat;
 import main.java.eco.models.Partenaire;
-import main.java.eco.models.enums.StatutContrat;
+import main.java.eco.enums.StatutContrat;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class ContratService {
-    private final Connection connection;
+
+    private final ContratDAO contratDAO;
+    private final PartenaireDAO partenaireDAO;
 
     public ContratService() throws SQLException {
-        this.connection = DatabaseConnection.getInstance().getConnection();
+        this.contratDAO = new ContratDAO();
+        this.partenaireDAO = new PartenaireDAO();
     }
 
-    public void addContrat(Contrat contrat) throws SQLException {
-        if (contrat.getDateDebut().after(contrat.getDateFin())) {
+    public void addContrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) throws SQLException {
+        // Validate input
+        if (dateDebut.after(dateFin)) {
             throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
         }
-        String query = "INSERT INTO contrats (id, date_debut, date_fin, tarif_special, conditions_accord, renouvelable, statut_contrat, id_partenaire) VALUES (?, ?, ?, ?, ?, ?, ?::statut_contrat, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setObject(1, contrat.getId());
-            stmt.setDate(2, new Date(contrat.getDateDebut().getTime()));
-            stmt.setDate(3, new Date(contrat.getDateFin().getTime()));
-            stmt.setBigDecimal(4, contrat.getTarifSpecial());
-            stmt.setString(5, contrat.getConditionsAccord());
-            stmt.setBoolean(6, contrat.isRenouvelable());
-            stmt.setString(7, contrat.getStatutContrat().name().toLowerCase());
-            stmt.setObject(8, contrat.getPartenaireId());
-            stmt.executeUpdate();
+
+        // Fetch partenaire from PartenaireDAO
+        Partenaire partenaire = partenaireDAO.getPartenaire(partenaireId);
+        if (partenaire == null) {
+            throw new IllegalArgumentException("Partenaire non trouvé avec ID : " + partenaireId);
         }
+
+        Contrat contrat = new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire);
+        contratDAO.addContrat(contrat);
     }
 
-    public void updateContrat(Contrat contrat) throws SQLException {
-        if (contrat.getDateDebut().after(contrat.getDateFin())) {
+    public void updateContrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) throws SQLException {
+        // Validate input
+        if (dateDebut.after(dateFin)) {
             throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
         }
-        String query = "UPDATE contrats SET date_debut = ?, date_fin = ?, tarif_special = ?, conditions_accord = ?, renouvelable = ?, statut_contrat = ?::statut_contrat, id_partenaire = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new Date(contrat.getDateDebut().getTime()));
-            stmt.setDate(2, new Date(contrat.getDateFin().getTime()));
-            stmt.setBigDecimal(3, contrat.getTarifSpecial());
-            stmt.setString(4, contrat.getConditionsAccord());
-            stmt.setBoolean(5, contrat.isRenouvelable());
-            stmt.setString(6, contrat.getStatutContrat().name().toLowerCase());
-            stmt.setObject(7, contrat.getPartenaireId());
-            stmt.setObject(8, contrat.getId());
-            stmt.executeUpdate();
+
+        // Fetch partenaire from PartenaireDAO
+        Partenaire partenaire = partenaireDAO.getPartenaire(partenaireId);
+        if (partenaire == null) {
+            throw new IllegalArgumentException("Partenaire non trouvé avec ID : " + partenaireId);
         }
+
+        Contrat contrat = new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire);
+        contratDAO.updateContrat(contrat);
     }
 
     public void deleteContrat(UUID id) throws SQLException {
-        String query = "DELETE FROM contrats WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setObject(1, id);
-            stmt.executeUpdate();
-        }
+        contratDAO.deleteContrat(id);
     }
 
     public Contrat getContrat(UUID id) throws SQLException {
-        String query = "SELECT * FROM contrats WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setObject(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Contrat(
-                        (UUID) rs.getObject("id"),
-                        rs.getDate("date_debut"),
-                        rs.getDate("date_fin"),
-                        rs.getBigDecimal("tarif_special"),
-                        rs.getString("conditions_accord"),
-                        rs.getBoolean("renouvelable"),
-                        StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
-                        (UUID) rs.getObject("id_partenaire")
-                );
-            }
-            return null;
-        }
+        return contratDAO.getContrat(id);
     }
 
     public List<Contrat> getAllContrats() throws SQLException {
-        List<Contrat> contrats = new ArrayList<>();
-        String query = "SELECT * FROM contrats";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                contrats.add(new Contrat(
-                        (UUID) rs.getObject("id"),
-                        rs.getDate("date_debut"),
-                        rs.getDate("date_fin"),
-                        rs.getBigDecimal("tarif_special"),
-                        rs.getString("conditions_accord"),
-                        rs.getBoolean("renouvelable"),
-                        StatutContrat.valueOf(rs.getString("statut_contrat").toUpperCase()),
-                        (UUID) rs.getObject("id_partenaire")
-                ));
-            }
-        }
-        return contrats;
+        return contratDAO.getAllContrats();
     }
+
+    // Additional service methods as needed
 }

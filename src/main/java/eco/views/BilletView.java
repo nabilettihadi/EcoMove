@@ -1,9 +1,11 @@
 package main.java.eco.views;
 
 import main.java.eco.models.Billet;
-import main.java.eco.models.enums.StatutBillet;
-import main.java.eco.models.enums.TypeTransport;
-import main.java.eco.services.BilletService;
+import main.java.eco.models.Contrat;
+import main.java.eco.enums.StatutBillet;
+import main.java.eco.enums.TypeTransport;
+import main.java.eco.dao.BilletDAO;
+import main.java.eco.dao.ContratDAO;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -16,7 +18,8 @@ import java.util.UUID;
 
 public class BilletView {
 
-    private final BilletService billetService = new BilletService();
+    private final BilletDAO billetService = new BilletDAO();
+    private final ContratDAO contratService = new ContratDAO();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public BilletView() throws SQLException {
@@ -79,11 +82,18 @@ public class BilletView {
         }
     }
 
-    private Billet saisirBillet() {
+    private Billet saisirBillet() throws SQLException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Entrez l'ID du Contrat (UUID): ");
-        UUID idContrat = UUID.fromString(scanner.nextLine());
 
+        System.out.println("=== Sélectionnez un Contrat ===");
+        List<Contrat> contrats = contratService.getAllContrats();
+        for (int i = 0; i < contrats.size(); i++) {
+            System.out.println((i + 1) + ". " + contrats.get(i).getId());
+        }
+        System.out.print("Entrez le numéro du Contrat: ");
+        int choixContrat = scanner.nextInt();
+        scanner.nextLine();
+        Contrat contrat = contrats.get(choixContrat - 1);
 
         System.out.println("Choisissez le Type de Transport :");
         System.out.println("1. AVION");
@@ -121,7 +131,6 @@ public class BilletView {
             System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
         }
 
-
         System.out.println("Choisissez le Statut du Billet :");
         System.out.println("1. VENDU");
         System.out.println("2. ANNULE");
@@ -143,16 +152,23 @@ public class BilletView {
                 statutBillet = StatutBillet.EN_ATTENTE;
                 break;
         }
-
-        return new Billet(UUID.randomUUID(), idContrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
+        return new Billet(UUID.randomUUID(), contrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
     }
 
-    private Billet saisirBillet(UUID id) {
+
+    private Billet saisirBillet(UUID id) throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Entrez l'ID du Contrat (UUID): ");
-        UUID idContrat = UUID.fromString(scanner.nextLine());
 
+        System.out.println("=== Sélectionnez un Contrat ===");
+        List<Contrat> contrats = contratService.getAllContrats();
+        for (int i = 0; i < contrats.size(); i++) {
+            System.out.println((i + 1) + ". " + contrats.get(i).getId());
+        }
+        System.out.print("Entrez le numéro du Contrat: ");
+        int choixContrat = scanner.nextInt();
+        scanner.nextLine();
+        Contrat contrat = contrats.get(choixContrat - 1);
 
         System.out.println("Choisissez le Type de Transport :");
         System.out.println("1. AVION");
@@ -190,7 +206,6 @@ public class BilletView {
             System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
         }
 
-
         System.out.println("Choisissez le Statut du Billet :");
         System.out.println("1. VENDU");
         System.out.println("2. ANNULE");
@@ -212,22 +227,13 @@ public class BilletView {
                 statutBillet = StatutBillet.EN_ATTENTE;
                 break;
         }
-
-        return new Billet(id, idContrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
+        return new Billet(id, contrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
     }
 
     private void displayBillets() throws SQLException {
         List<Billet> billets = billetService.getAllBillets();
-        System.out.println("=== Liste des Billets ===");
         for (Billet billet : billets) {
-            System.out.println("ID: " + billet.getId());
-            System.out.println("ID Contrat: " + billet.getIdContrat());
-            System.out.println("Type de Transport: " + billet.getTypeTransport());
-            System.out.println("Prix d'Achat: " + billet.getPrixAchat());
-            System.out.println("Prix de Vente: " + billet.getPrixVente());
-            System.out.println("Date de Vente: " + dateFormat.format(billet.getDateVente()));
-            System.out.println("Statut du Billet: " + billet.getStatutBillet());
-            System.out.println("--------------------------");
+            System.out.println(billet);
         }
     }
 }
