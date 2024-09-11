@@ -23,12 +23,12 @@ public class ContratService {
     }
 
     public void addContrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) throws SQLException {
-        // Validate input
+
         if (dateDebut.after(dateFin)) {
             throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
         }
 
-        // Fetch partenaire from PartenaireDAO
+
         Partenaire partenaire = partenaireDAO.getPartenaire(partenaireId);
         if (partenaire == null) {
             throw new IllegalArgumentException("Partenaire non trouvé avec ID : " + partenaireId);
@@ -39,12 +39,12 @@ public class ContratService {
     }
 
     public void updateContrat(UUID id, Date dateDebut, Date dateFin, BigDecimal tarifSpecial, String conditionsAccord, boolean renouvelable, StatutContrat statutContrat, UUID partenaireId) throws SQLException {
-        // Validate input
+
         if (dateDebut.after(dateFin)) {
             throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
         }
 
-        // Fetch partenaire from PartenaireDAO
+
         Partenaire partenaire = partenaireDAO.getPartenaire(partenaireId);
         if (partenaire == null) {
             throw new IllegalArgumentException("Partenaire non trouvé avec ID : " + partenaireId);
@@ -66,5 +66,5 @@ public class ContratService {
         return contratDAO.getAllContrats();
     }
 
-    // Additional service methods as needed
+
 }

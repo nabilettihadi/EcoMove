@@ -60,7 +60,7 @@ public class BilletDAO {
             statement.setObject(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    // Créer un billet avec les données récupérées
+
                     return new Billet(
                             UUID.fromString(resultSet.getString("id")),
                             new ContratDAO().getContrat(UUID.fromString(resultSet.getString("id_contrat"))),

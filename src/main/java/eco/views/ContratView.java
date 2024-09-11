@@ -144,7 +144,7 @@ public class ContratView {
 
         System.out.print("Entrez le statut du contrat (1: EN_COURS, 2: TERMINE, 3: SUSPENDU): ");
         int statut = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         StatutContrat statutContrat = StatutContrat.fromInt(statut);
 
         List<Partenaire> partenaires = partenaireService.getAllPartenaires();
@@ -154,7 +154,7 @@ public class ContratView {
         }
         System.out.print("Choisissez un partenaire par numéro: ");
         int partenaireIndex = scanner.nextInt() - 1;
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         Partenaire partenaire = partenaires.get(partenaireIndex);
 
         return new Contrat(id, dateDebut, dateFin, tarifSpecial, conditionsAccord, renouvelable, statutContrat, partenaire);

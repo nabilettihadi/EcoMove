@@ -92,7 +92,7 @@ public class Contrat {
     }
 
     public void setPartenaire(Partenaire partenaire) {
-        this.partenaire = partenaire; // Stockage de l'objet Partenaire
+        this.partenaire = partenaire;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Contrat {
                 ", conditionsAccord='" + conditionsAccord + '\'' +
                 ", renouvelable=" + renouvelable +
                 ", statutContrat=" + statutContrat +
-                ", partenaire=" + partenaire + // Affichage de l'objet Partenaire
+                ", partenaire=" + partenaire +
                 '}';
     }
 }

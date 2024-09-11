@@ -95,13 +95,13 @@ public class OffrePromotionnelleView {
         System.out.print("Conditions : ");
         String conditions = scanner.nextLine();
 
-        System.out.print("Description : "); // Ajoutez cette ligne
-        String description = scanner.nextLine(); // Ajoutez cette ligne
+        System.out.print("Description : ");
+        String description = scanner.nextLine();
 
         OffrePromotionnelle offre = new OffrePromotionnelle(
                 id,
                 nomOffre,
-                description, // Ajoutez description ici
+                description,
                 dateDebut,
                 dateFin,
                 typeReduction,
@@ -128,8 +128,8 @@ public class OffrePromotionnelleView {
         System.out.print("Nouveau nom de l'offre : ");
         offre.setNomOffre(scanner.nextLine());
 
-        System.out.print("Nouvelle description : "); // Ajoutez cette ligne
-        offre.setDescription(scanner.nextLine()); // Ajoutez cette ligne
+        System.out.print("Nouvelle description : ");
+        offre.setDescription(scanner.nextLine());
 
         System.out.print("Nouvelles conditions : ");
         offre.setConditions(scanner.nextLine());

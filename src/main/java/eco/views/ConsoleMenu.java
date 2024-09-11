@@ -1,9 +1,14 @@
 package main.java.eco.views;
 
+
+import main.java.eco.services.ClientService;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+
 public class ConsoleMenu {
+
+    private ClientService clientService;
 
     public void displayMainMenu() throws SQLException {
         Scanner scanner = new Scanner(System.in);
@@ -15,6 +20,7 @@ public class ConsoleMenu {
             System.out.println("2. Gestion des Contrats");
             System.out.println("3. Gestion des Offres Promotionnelles");
             System.out.println("4. Suivi des Billets Partenaires");
+            System.out.println("5. Gestion des Utilisateurs");
             System.out.println("0. Quitter");
             System.out.print("Choisissez une option: ");
             choice = scanner.nextInt();
@@ -35,6 +41,10 @@ public class ConsoleMenu {
                 case 4:
                     BilletView billetView = new BilletView();
                     billetView.displayBilletMenu();
+                    break;
+                case 5:
+                    ClientView clientView = new ClientView();
+                    clientView.displayClientMenu();
                     break;
                 case 0:
                     System.out.println("Au revoir !");
