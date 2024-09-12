@@ -46,7 +46,7 @@ public class ReservationDAO {
 
     public List<Reservation> getAllReservations() throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
-        String sql = "SELECT * FROM reservations"; // Assurez-vous que le nom de la table est correct
+        String sql = "SELECT * FROM reservations";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
