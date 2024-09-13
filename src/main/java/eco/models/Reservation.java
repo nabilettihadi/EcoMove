@@ -1,79 +1,55 @@
-package main.java.eco.model;
+package main.java.eco.models;
+
+import main.java.eco.enums.StatutReservation;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class Reservation {
-    private int id;
-    private int clientId;
-    private String villeDepart;
-    private String villeDestination;
-    private LocalDate dateDepart;
-    private String transporteur;
-    private String horaire;
-    private double prix;
+    private UUID id;
+    private Client client;
+    private Billet billet;
+    private LocalDate dateReservation;
+    private StatutReservation statutReservation;
 
     // Getters and Setters
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public int getClientId() {
-        return clientId;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public String getVilleDepart() {
-        return villeDepart;
+    public Billet getBillet() {
+        return billet;
     }
 
-    public void setVilleDepart(String villeDepart) {
-        this.villeDepart = villeDepart;
+    public void setBillet(Billet billet) {
+        this.billet = billet;
     }
 
-    public String getVilleDestination() {
-        return villeDestination;
+    public LocalDate getDateReservation() {
+        return dateReservation;
     }
 
-    public void setVilleDestination(String villeDestination) {
-        this.villeDestination = villeDestination;
+    public void setDateReservation(LocalDate dateReservation) {
+        this.dateReservation = dateReservation;
     }
 
-    public LocalDate getDateDepart() {
-        return dateDepart;
+    public StatutReservation getStatutReservation() {
+        return statutReservation;
     }
 
-    public void setDateDepart(LocalDate dateDepart) {
-        this.dateDepart = dateDepart;
-    }
-
-    public String getTransporteur() {
-        return transporteur;
-    }
-
-    public void setTransporteur(String transporteur) {
-        this.transporteur = transporteur;
-    }
-
-    public String getHoraire() {
-        return horaire;
-    }
-
-    public void setHoraire(String horaire) {
-        this.horaire = horaire;
-    }
-
-    public double getPrix() {
-        return prix;
-    }
-
-    public void setPrix(double prix) {
-        this.prix = prix;
+    public void setStatutReservation(StatutReservation statutReservation) {
+        this.statutReservation = statutReservation;
     }
 }

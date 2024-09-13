@@ -30,6 +30,10 @@ public class Billet {
         this.trajet = trajet;
     }
 
+    public Billet() {
+
+    }
+
     // Getters et setters
     public UUID getId() {
         return id;

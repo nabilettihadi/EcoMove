@@ -1,42 +1,50 @@
 package main.java.eco.dao;
 
-import main.java.eco.model.Reservation;
+import main.java.eco.db.DatabaseConnection;
+import main.java.eco.enums.StatutReservation;
+import main.java.eco.models.Reservation;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ReservationDAO {
-    private Connection connection;
+    private final Connection connection;
 
-    public ReservationDAO(Connection connection) {
-        this.connection = connection;
+    public ReservationDAO(Connection connection) throws SQLException {
+        this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    public void addReservation(Reservation reservation) throws SQLException {
-        String query = "INSERT INTO reservations (client_id, ville_depart, ville_destination, date_depart, transporteur, horaire, prix) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, reservation.getClientId());
-            stmt.setString(2, reservation.getVilleDepart());
-            stmt.setString(3, reservation.getVilleDestination());
-            stmt.setDate(4, Date.valueOf(reservation.getDateDepart()));
-            stmt.setString(5, reservation.getTransporteur());
-            stmt.setString(6, reservation.getHoraire());
-            stmt.setDouble(7, reservation.getPrix());
+    public void createReservation(Reservation reservation) throws SQLException {
+        String sql = "INSERT INTO reservation (id, client_id, billet_id, date_reservation, statut_reservation) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, reservation.getId());
+            stmt.setObject(2, reservation.getClient().getId());
+            stmt.setObject(3, reservation.getBillet().getId());
+            stmt.setDate(4, Date.valueOf(reservation.getDateReservation()));
+            stmt.setObject(5, reservation.getStatutReservation().name().toUpperCase(), Types.OTHER); // Storing as String
             stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                reservation.setId(rs.getInt(1));
-            }
         }
     }
 
-    public List<Reservation> getReservationsByClientId(int clientId) throws SQLException {
-        String query = "SELECT * FROM reservations WHERE client_id = ?";
+    public Reservation getReservationById(UUID id) throws SQLException {
+        String sql = "SELECT * FROM reservation WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapRowToReservation(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Reservation> getAllReservations() throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, clientId);
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM reservation";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 reservations.add(mapRowToReservation(rs));
             }
@@ -44,30 +52,33 @@ public class ReservationDAO {
         return reservations;
     }
 
-    public List<Reservation> getAllReservations() throws SQLException {
-        List<Reservation> reservations = new ArrayList<>();
-        String sql = "SELECT * FROM reservations";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                Reservation reservation = mapRowToReservation(rs);
-                reservations.add(reservation);
-            }
+    public void updateReservation(Reservation reservation) throws SQLException {
+        String sql = "UPDATE reservation SET client_id = ?, billet_id = ?, date_reservation = ?, statut_reservation = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, reservation.getClient().getId());
+            stmt.setObject(2, reservation.getBillet().getId());
+            stmt.setDate(3, Date.valueOf(reservation.getDateReservation()));
+            stmt.setObject(4, reservation.getStatutReservation().name().toUpperCase(), Types.OTHER); // Storing as String
+            stmt.setObject(5, reservation.getId());
+            stmt.executeUpdate();
         }
-        return reservations;
+    }
+
+    public void deleteReservation(UUID id) throws SQLException {
+        String sql = "DELETE FROM reservation WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            stmt.executeUpdate();
+        }
     }
 
     private Reservation mapRowToReservation(ResultSet rs) throws SQLException {
         Reservation reservation = new Reservation();
-        reservation.setId(rs.getInt("id"));
-        reservation.setClientId(rs.getInt("client_id"));
-        reservation.setVilleDepart(rs.getString("ville_depart"));
-        reservation.setVilleDestination(rs.getString("ville_destination"));
-        reservation.setDateDepart(rs.getDate("date_depart").toLocalDate());
-        reservation.setTransporteur(rs.getString("transporteur"));
-        reservation.setHoraire(rs.getString("horaire"));
-        reservation.setPrix(rs.getDouble("prix"));
+        reservation.setId((UUID) rs.getObject("id"));
+        reservation.setClient(new ClientDAO().getClient((UUID) rs.getObject("client_id")));
+        reservation.setBillet(new BilletDAO().getBillet((UUID) rs.getObject("billet_id")));
+        reservation.setDateReservation(rs.getDate("date_reservation").toLocalDate());
+        reservation.setStatutReservation(StatutReservation.valueOf((String) rs.getObject("statut_reservation")));
         return reservation;
     }
 }

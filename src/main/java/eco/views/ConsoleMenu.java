@@ -20,6 +20,7 @@ public class ConsoleMenu {
             System.out.println("4. Suivi des Billets Partenaires");
             System.out.println("5. Gestion des Utilisateurs");
             System.out.println("6. Gestion des Trajets");
+            System.out.println("7. Gestion des Reservations");
             System.out.println("0. Quitter");
             System.out.print("Choisissez une option: ");
             choice = scanner.nextInt();
@@ -48,6 +49,10 @@ public class ConsoleMenu {
                 case 6:
                     TrajetView trajetView = new TrajetView();
                     trajetView.displayTrajetMenu();
+                    break;
+                case 7:
+                    ReservationView reservationView = new ReservationView();
+                    reservationView.displayReservationMenu();
                     break;
                 case 0:
                     System.out.println("Au revoir !");

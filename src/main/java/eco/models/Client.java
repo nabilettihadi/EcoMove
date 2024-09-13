@@ -17,6 +17,10 @@ public class Client {
         this.telephone = telephone;
     }
 
+    public Client() {
+
+    }
+
     // Getters et Setters
     public UUID getId() {
         return id;
