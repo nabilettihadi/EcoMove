@@ -3,6 +3,7 @@ package main.java.eco.models;
 import main.java.eco.enums.TypeTransport;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Trajet {
     private int id;
@@ -10,26 +11,24 @@ public class Trajet {
     private int villeArriveeId;
     private LocalDateTime dateDepart;
     private LocalDateTime dateArrivee;
-    private String description;
-    private TypeTransport typeTransport;
+    private TypeTransport transporteur; // Renommé ici
+    private List<Billet> billets;
 
-    public Trajet(int villeDepartId, int villeArriveeId, LocalDateTime dateDepart, LocalDateTime dateArrivee, String description, TypeTransport typeTransport) {
+    public Trajet(int villeDepartId, int villeArriveeId, LocalDateTime dateDepart, LocalDateTime dateArrivee, TypeTransport transporteur) {
         this.villeDepartId = villeDepartId;
         this.villeArriveeId = villeArriveeId;
         this.dateDepart = dateDepart;
         this.dateArrivee = dateArrivee;
-        this.description = description;
-        this.typeTransport = typeTransport;
+        this.transporteur = transporteur; // Renommé ici
     }
 
-    public Trajet(int id, int villeDepartId, int villeArriveeId, LocalDateTime dateDepart, LocalDateTime dateArrivee, String description, TypeTransport typeTransport) {
+    public Trajet(int id, int villeDepartId, int villeArriveeId, LocalDateTime dateDepart, LocalDateTime dateArrivee, TypeTransport transporteur) {
         this.id = id;
         this.villeDepartId = villeDepartId;
         this.villeArriveeId = villeArriveeId;
         this.dateDepart = dateDepart;
         this.dateArrivee = dateArrivee;
-        this.description = description;
-        this.typeTransport = typeTransport;
+        this.transporteur = transporteur; // Renommé ici
     }
 
     // Getters and Setters
@@ -73,23 +72,24 @@ public class Trajet {
         this.dateArrivee = dateArrivee;
     }
 
-    public String getDescription() {
-        return description;
+    public TypeTransport getTransporteur() { // Renommé ici
+        return transporteur;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTransporteur(TypeTransport transporteur) { // Renommé ici
+        this.transporteur = transporteur;
     }
 
-    public TypeTransport getTypeTransport() {
-        return typeTransport;
+    public List<Billet> getBillets() {
+        return billets;
     }
 
-    public void setTypeTransport(TypeTransport typeTransport) {
-        this.typeTransport = typeTransport;
+    public void setBillets(List<Billet> billets) {
+        this.billets = billets;
     }
 
-    @Override
+
+@Override
     public String toString() {
         return "Trajet{" +
                 "id=" + id +
@@ -97,8 +97,8 @@ public class Trajet {
                 ", villeArriveeId=" + villeArriveeId +
                 ", dateDepart=" + dateDepart +
                 ", dateArrivee=" + dateArrivee +
-                ", description='" + description + '\'' +
-                ", typeTransport=" + typeTransport +
+                ", transporteur=" + transporteur +
+                ", billets=" + billets +
                 '}';
     }
 }

@@ -1,11 +1,12 @@
 package main.java.eco.views;
 
-import main.java.eco.models.Billet;
-import main.java.eco.models.Contrat;
+import main.java.eco.dao.ContratDAO;
 import main.java.eco.enums.StatutBillet;
 import main.java.eco.enums.TypeTransport;
+import main.java.eco.models.Billet;
 import main.java.eco.dao.BilletDAO;
-import main.java.eco.dao.ContratDAO;
+import main.java.eco.models.Trajet;
+import main.java.eco.dao.TrajetDAO;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -18,19 +19,19 @@ import java.util.UUID;
 
 public class BilletView {
 
-    private final BilletDAO billetService = new BilletDAO();
-    private final ContratDAO contratService = new ContratDAO();
+    private final BilletDAO billetDAO = new BilletDAO();
+    private final TrajetDAO trajetDAO = new TrajetDAO();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final Scanner scanner = new Scanner(System.in);
 
     public BilletView() throws SQLException {
     }
 
     public void displayBilletMenu() {
-        Scanner scanner = new Scanner(System.in);
         int choice = -1;
 
         while (choice != 0) {
-            System.out.println("=== Suivi des Billets ===");
+            System.out.println("=== Gestion des Billets ===");
             System.out.println("1. Ajouter un Billet");
             System.out.println("2. Modifier un Billet");
             System.out.println("3. Supprimer un Billet");
@@ -43,7 +44,7 @@ public class BilletView {
             switch (choice) {
                 case 1:
                     try {
-                        billetService.addBillet(saisirBillet());
+                        billetDAO.addBillet(saisirBillet());
                     } catch (Exception e) {
                         System.out.println("Erreur lors de l'ajout du billet : " + e.getMessage());
                     }
@@ -52,7 +53,7 @@ public class BilletView {
                     System.out.print("Entrez l'ID du Billet à modifier (UUID): ");
                     UUID idModifier = UUID.fromString(scanner.nextLine());
                     try {
-                        billetService.updateBillet(saisirBillet(idModifier));
+                        billetDAO.updateBillet(saisirBillet(idModifier));
                     } catch (Exception e) {
                         System.out.println("Erreur lors de la modification du billet : " + e.getMessage());
                     }
@@ -61,7 +62,7 @@ public class BilletView {
                     System.out.print("Entrez l'ID du Billet à supprimer (UUID): ");
                     UUID idSupprimer = UUID.fromString(scanner.nextLine());
                     try {
-                        billetService.deleteBillet(idSupprimer);
+                        billetDAO.deleteBillet(idSupprimer);
                     } catch (Exception e) {
                         System.out.println("Erreur lors de la suppression du billet : " + e.getMessage());
                     }
@@ -74,164 +75,53 @@ public class BilletView {
                     }
                     break;
                 case 0:
-                    System.out.println("Retour au menu principal...");
+                    System.out.println("Retour au menu principal.");
                     break;
                 default:
-                    System.out.println("Option invalide. Veuillez réessayer.");
+                    System.out.println("Option invalide.");
+                    break;
             }
         }
     }
 
-    private Billet saisirBillet() throws SQLException {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("=== Sélectionnez un Contrat ===");
-        List<Contrat> contrats = contratService.getAllContrats();
-        for (int i = 0; i < contrats.size(); i++) {
-            System.out.println((i + 1) + ". " + contrats.get(i).getId());
-        }
-        System.out.print("Entrez le numéro du Contrat: ");
-        int choixContrat = scanner.nextInt();
-        scanner.nextLine();
-        Contrat contrat = contrats.get(choixContrat - 1);
-
-        System.out.println("Choisissez le Type de Transport :");
-        System.out.println("1. AVION");
-        System.out.println("2. TRAIN");
-        System.out.println("3. BUS");
-        int choixTypeTransport = scanner.nextInt();
-        TypeTransport typeTransport;
-        switch (choixTypeTransport) {
-            case 1:
-                typeTransport = TypeTransport.AVION;
-                break;
-            case 2:
-                typeTransport = TypeTransport.TRAIN;
-                break;
-            case 3:
-                typeTransport = TypeTransport.BUS;
-                break;
-            default:
-                System.out.println("Choix invalide. Type de Transport par défaut : AVION.");
-                typeTransport = TypeTransport.AVION;
-                break;
-        }
-
-        System.out.print("Entrez le Prix d'Achat: ");
-        BigDecimal prixAchat = scanner.nextBigDecimal();
-
-        System.out.print("Entrez le Prix de Vente: ");
-        BigDecimal prixVente = scanner.nextBigDecimal();
-
-        System.out.print("Entrez la Date de Vente (yyyy-MM-dd): ");
-        Date dateVente = null;
-        try {
-            dateVente = dateFormat.parse(scanner.next());
-        } catch (ParseException e) {
-            System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
-        }
-
-        System.out.println("Choisissez le Statut du Billet :");
-        System.out.println("1. VENDU");
-        System.out.println("2. ANNULE");
-        System.out.println("3. EN_ATTENTE");
-        int choixStatutBillet = scanner.nextInt();
-        StatutBillet statutBillet;
-        switch (choixStatutBillet) {
-            case 1:
-                statutBillet = StatutBillet.VENDU;
-                break;
-            case 2:
-                statutBillet = StatutBillet.ANNULE;
-                break;
-            case 3:
-                statutBillet = StatutBillet.EN_ATTENTE;
-                break;
-            default:
-                System.out.println("Choix invalide. Statut du Billet par défaut : EN_ATTENTE.");
-                statutBillet = StatutBillet.EN_ATTENTE;
-                break;
-        }
-        return new Billet(UUID.randomUUID(), contrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
+    private Billet saisirBillet() throws ParseException, SQLException {
+        return saisirBillet(null);
     }
 
+    private Billet saisirBillet(UUID id) throws ParseException, SQLException {
+        System.out.print("ID du contrat (UUID) : ");
+        UUID contratId = UUID.fromString(scanner.nextLine());
 
-    private Billet saisirBillet(UUID id) throws SQLException {
+        System.out.print("Type de transport (bus, train, avion) : ");
+        String typeTransportStr = scanner.nextLine().toUpperCase();
+        TypeTransport typeTransport = TypeTransport.valueOf(typeTransportStr);
 
-        Scanner scanner = new Scanner(System.in);
+        System.out.print("Prix d'achat : ");
+        BigDecimal prixAchat = new BigDecimal(scanner.nextLine());
 
-        System.out.println("=== Sélectionnez un Contrat ===");
-        List<Contrat> contrats = contratService.getAllContrats();
-        for (int i = 0; i < contrats.size(); i++) {
-            System.out.println((i + 1) + ". " + contrats.get(i).getId());
+        System.out.print("Prix de vente : ");
+        BigDecimal prixVente = new BigDecimal(scanner.nextLine());
+
+        System.out.print("Date de vente (yyyy-MM-dd) : ");
+        Date dateVente = dateFormat.parse(scanner.nextLine());
+
+        System.out.print("Statut du billet (valide, annulé) : ");
+        String statutBilletStr = scanner.nextLine().toUpperCase();
+        StatutBillet statutBillet = StatutBillet.valueOf(statutBilletStr);
+
+        System.out.print("ID du trajet : ");
+        int trajetId = Integer.parseInt(scanner.nextLine());
+        Trajet trajet = trajetDAO.getTrajetById(trajetId);
+
+        if (id == null) {
+            return new Billet(UUID.randomUUID(), new ContratDAO().getContrat(contratId), typeTransport, prixAchat, prixVente, dateVente, statutBillet, trajet);
+        } else {
+            return new Billet(id, new ContratDAO().getContrat(contratId), typeTransport, prixAchat, prixVente, dateVente, statutBillet, trajet);
         }
-        System.out.print("Entrez le numéro du Contrat: ");
-        int choixContrat = scanner.nextInt();
-        scanner.nextLine();
-        Contrat contrat = contrats.get(choixContrat - 1);
-
-        System.out.println("Choisissez le Type de Transport :");
-        System.out.println("1. AVION");
-        System.out.println("2. TRAIN");
-        System.out.println("3. BUS");
-        int choixTypeTransport = scanner.nextInt();
-        TypeTransport typeTransport;
-        switch (choixTypeTransport) {
-            case 1:
-                typeTransport = TypeTransport.AVION;
-                break;
-            case 2:
-                typeTransport = TypeTransport.TRAIN;
-                break;
-            case 3:
-                typeTransport = TypeTransport.BUS;
-                break;
-            default:
-                System.out.println("Choix invalide. Type de Transport par défaut : AVION.");
-                typeTransport = TypeTransport.AVION;
-                break;
-        }
-
-        System.out.print("Entrez le Prix d'Achat: ");
-        BigDecimal prixAchat = scanner.nextBigDecimal();
-
-        System.out.print("Entrez le Prix de Vente: ");
-        BigDecimal prixVente = scanner.nextBigDecimal();
-
-        System.out.print("Entrez la Date de Vente (yyyy-MM-dd): ");
-        Date dateVente = null;
-        try {
-            dateVente = dateFormat.parse(scanner.next());
-        } catch (ParseException e) {
-            System.out.println("Format de date invalide. Utilisez yyyy-MM-dd.");
-        }
-
-        System.out.println("Choisissez le Statut du Billet :");
-        System.out.println("1. VENDU");
-        System.out.println("2. ANNULE");
-        System.out.println("3. EN_ATTENTE");
-        int choixStatutBillet = scanner.nextInt();
-        StatutBillet statutBillet;
-        switch (choixStatutBillet) {
-            case 1:
-                statutBillet = StatutBillet.VENDU;
-                break;
-            case 2:
-                statutBillet = StatutBillet.ANNULE;
-                break;
-            case 3:
-                statutBillet = StatutBillet.EN_ATTENTE;
-                break;
-            default:
-                System.out.println("Choix invalide. Statut du Billet par défaut : EN_ATTENTE.");
-                statutBillet = StatutBillet.EN_ATTENTE;
-                break;
-        }
-        return new Billet(id, contrat, typeTransport, prixAchat, prixVente, dateVente, statutBillet);
     }
 
     private void displayBillets() throws SQLException {
-        List<Billet> billets = billetService.getAllBillets();
+        List<Billet> billets = billetDAO.getAllBillets();
         for (Billet billet : billets) {
             System.out.println(billet);
         }

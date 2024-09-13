@@ -15,9 +15,10 @@ public class Billet {
     private BigDecimal prixVente;
     private Date dateVente;
     private StatutBillet statutBillet;
+    private Trajet trajet;
 
     public Billet(UUID id, Contrat contrat, TypeTransport typeTransport, BigDecimal prixAchat, BigDecimal prixVente,
-                  Date dateVente, StatutBillet statutBillet) {
+                  Date dateVente, StatutBillet statutBillet, Trajet trajet) {
         this.id = id;
         this.contrat = contrat;
         this.typeTransport = typeTransport;
@@ -25,6 +26,15 @@ public class Billet {
         this.prixVente = prixVente;
         this.dateVente = dateVente;
         this.statutBillet = statutBillet;
+        this.trajet = trajet;
+    }
+
+    public Billet(UUID id, Trajet trajet, BigDecimal prixVente, Date dateReservation) {
+        this.id = id;
+
+
+        this.prixVente = prixVente;
+        this.trajet = trajet;
     }
 
     // Getters et setters
@@ -84,6 +94,14 @@ public class Billet {
         this.statutBillet = statutBillet;
     }
 
+    public Trajet getTrajet() {
+        return trajet;
+    }
+
+    public void setTrajet(Trajet trajet) {
+        this.trajet = trajet;
+    }
+
     @Override
     public String toString() {
         return "Billet{" +
@@ -94,6 +112,7 @@ public class Billet {
                 ", prixVente=" + prixVente +
                 ", dateVente=" + dateVente +
                 ", statutBillet=" + statutBillet +
+                ", trajet=" + trajet +
                 '}';
     }
 }
