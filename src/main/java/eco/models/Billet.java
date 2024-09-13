@@ -1,3 +1,4 @@
+// Billet.java
 package main.java.eco.models;
 
 import main.java.eco.enums.StatutBillet;
@@ -26,14 +27,6 @@ public class Billet {
         this.prixVente = prixVente;
         this.dateVente = dateVente;
         this.statutBillet = statutBillet;
-        this.trajet = trajet;
-    }
-
-    public Billet(UUID id, Trajet trajet, BigDecimal prixVente, Date dateReservation) {
-        this.id = id;
-
-
-        this.prixVente = prixVente;
         this.trajet = trajet;
     }
 

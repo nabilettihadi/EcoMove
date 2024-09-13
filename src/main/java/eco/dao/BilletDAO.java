@@ -1,3 +1,4 @@
+// BilletDAO.java
 package main.java.eco.dao;
 
 import main.java.eco.db.DatabaseConnection;
@@ -21,29 +22,29 @@ public class BilletDAO {
     public void addBillet(Billet billet) throws SQLException {
         String query = "INSERT INTO billets (id, id_contrat, type_transport, prix_achat, prix_vente, date_vente, statut_billet, trajet_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, billet.getId());
-            statement.setObject(2, billet.getContrat().getId());
-            statement.setString(3, billet.getTypeTransport().name().toLowerCase());
+            statement.setObject(1, billet.getId(), Types.OTHER);
+            statement.setObject(2, billet.getContrat().getId(), Types.OTHER);
+            statement.setObject(3, billet.getTypeTransport().name().toLowerCase(), Types.OTHER);
             statement.setBigDecimal(4, billet.getPrixAchat());
             statement.setBigDecimal(5, billet.getPrixVente());
             statement.setDate(6, new java.sql.Date(billet.getDateVente().getTime()));
-            statement.setString(7, billet.getStatutBillet().name().toLowerCase());
-            statement.setObject(8, billet.getTrajet() != null ? billet.getTrajet().getId() : null);
+            statement.setObject(7, billet.getStatutBillet().name().toLowerCase(), Types.OTHER);
+            statement.setObject(8, billet.getTrajet() != null ? billet.getTrajet().getId() : null, Types.INTEGER);
             statement.executeUpdate();
         }
     }
 
     public void updateBillet(Billet billet) throws SQLException {
         String query = "UPDATE billets SET id_contrat = ?, type_transport = ?, prix_achat = ?, prix_vente = ?, date_vente = ?, statut_billet = ?, trajet_id = ? WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)){
-            statement.setObject(1, billet.getContrat().getId());
-            statement.setString(2, billet.getTypeTransport().name().toLowerCase());
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setObject(1, billet.getContrat().getId(), Types.OTHER);
+            statement.setObject(2, billet.getTypeTransport().name().toLowerCase(), Types.OTHER);
             statement.setBigDecimal(3, billet.getPrixAchat());
             statement.setBigDecimal(4, billet.getPrixVente());
             statement.setDate(5, new java.sql.Date(billet.getDateVente().getTime()));
-            statement.setString(6, billet.getStatutBillet().name().toLowerCase());
-            statement.setObject(7, billet.getTrajet() != null ? billet.getTrajet().getId() : null);
-            statement.setObject(8, billet.getId());
+            statement.setObject(6, billet.getStatutBillet().name().toLowerCase(), Types.OTHER);
+            statement.setObject(7, billet.getTrajet() != null ? billet.getTrajet().getId() : null, Types.INTEGER);
+            statement.setObject(8, billet.getId(), Types.OTHER);
             statement.executeUpdate();
         }
     }
@@ -51,7 +52,7 @@ public class BilletDAO {
     public void deleteBillet(UUID id) throws SQLException {
         String query = "DELETE FROM billets WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, id);
+            statement.setObject(1, id, Types.OTHER);
             statement.executeUpdate();
         }
     }
@@ -59,17 +60,17 @@ public class BilletDAO {
     public Billet getBillet(UUID id) throws SQLException {
         String query = "SELECT * FROM billets WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, id);
+            statement.setObject(1, id, Types.OTHER);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new Billet(
                             UUID.fromString(resultSet.getString("id")),
                             new ContratDAO().getContrat(UUID.fromString(resultSet.getString("id_contrat"))),
-                            TypeTransport.valueOf(resultSet.getString("type_transport").toUpperCase()),
+                            TypeTransport.valueOf(resultSet.getObject("type_transport").toString().toUpperCase()),
                             resultSet.getBigDecimal("prix_achat"),
                             resultSet.getBigDecimal("prix_vente"),
                             resultSet.getDate("date_vente"),
-                            StatutBillet.valueOf(resultSet.getString("statut_billet").toUpperCase()),
+                            StatutBillet.valueOf(resultSet.getObject("statut_billet").toString().toUpperCase()),
                             new TrajetDAO().getTrajetById(resultSet.getInt("trajet_id"))
                     );
                 }
@@ -87,11 +88,11 @@ public class BilletDAO {
                 billets.add(new Billet(
                         UUID.fromString(resultSet.getString("id")),
                         new ContratDAO().getContrat(UUID.fromString(resultSet.getString("id_contrat"))),
-                        TypeTransport.valueOf(resultSet.getString("type_transport").toUpperCase()),
+                        TypeTransport.valueOf(resultSet.getObject("type_transport").toString().toUpperCase()),
                         resultSet.getBigDecimal("prix_achat"),
                         resultSet.getBigDecimal("prix_vente"),
                         resultSet.getDate("date_vente"),
-                        StatutBillet.valueOf(resultSet.getString("statut_billet").toUpperCase()),
+                        StatutBillet.valueOf(resultSet.getObject("statut_billet").toString().toUpperCase()),
                         new TrajetDAO().getTrajetById(resultSet.getInt("trajet_id"))
                 ));
             }
@@ -109,11 +110,11 @@ public class BilletDAO {
                     billets.add(new Billet(
                             UUID.fromString(resultSet.getString("id")),
                             new ContratDAO().getContrat(UUID.fromString(resultSet.getString("id_contrat"))),
-                            TypeTransport.valueOf(resultSet.getString("type_transport").toUpperCase()),
+                            TypeTransport.valueOf(resultSet.getObject("type_transport").toString().toUpperCase()),
                             resultSet.getBigDecimal("prix_achat"),
                             resultSet.getBigDecimal("prix_vente"),
                             resultSet.getDate("date_vente"),
-                            StatutBillet.valueOf(resultSet.getString("statut_billet").toUpperCase()),
+                            StatutBillet.valueOf(resultSet.getObject("statut_billet").toString().toUpperCase()),
                             new TrajetDAO().getTrajetById(resultSet.getInt("trajet_id"))
                     ));
                 }
