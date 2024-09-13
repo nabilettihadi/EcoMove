@@ -23,7 +23,7 @@ public class TrajetDAO {
             pstmt.setInt(2, trajet.getVilleArriveeId());
             pstmt.setTimestamp(3, Timestamp.valueOf(trajet.getDateDepart()));
             pstmt.setTimestamp(4, Timestamp.valueOf(trajet.getDateArrivee()));
-            pstmt.setObject(5, trajet.getTransporteur().name(), Types.OTHER);
+            pstmt.setObject(5, trajet.getTransporteur().name().toLowerCase(), Types.OTHER);
             pstmt.executeUpdate();
         }
     }
@@ -58,7 +58,7 @@ public class TrajetDAO {
             pstmt.setInt(2, trajet.getVilleArriveeId());
             pstmt.setTimestamp(3, Timestamp.valueOf(trajet.getDateDepart()));
             pstmt.setTimestamp(4, Timestamp.valueOf(trajet.getDateArrivee()));
-            pstmt.setObject(5, trajet.getTransporteur().name(), Types.OTHER);
+            pstmt.setObject(5, trajet.getTransporteur().name().toLowerCase(), Types.OTHER);
             pstmt.setInt(6, trajet.getId());
             pstmt.executeUpdate();
         }

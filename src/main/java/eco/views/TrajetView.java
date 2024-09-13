@@ -6,6 +6,7 @@ import main.java.eco.enums.TypeTransport;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -56,16 +57,21 @@ public class TrajetView {
     }
 
     private void ajouterTrajet() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         System.out.print("Ville de départ (ID) : ");
         int villeDepartId = scanner.nextInt();
         System.out.print("Ville d'arrivée (ID) : ");
         int villeArriveeId = scanner.nextInt();
+        scanner.nextLine();
+
         System.out.print("Date de départ (yyyy-MM-dd HH:mm:ss) : ");
-        LocalDateTime dateDepart = LocalDateTime.parse(scanner.next());
+        LocalDateTime dateDepart = LocalDateTime.parse(scanner.nextLine(), formatter);
         System.out.print("Date d'arrivée (yyyy-MM-dd HH:mm:ss) : ");
-        LocalDateTime dateArrivee = LocalDateTime.parse(scanner.next());
+        LocalDateTime dateArrivee = LocalDateTime.parse(scanner.nextLine(), formatter);
+
         System.out.print("Transporteur (e.g., BUS, TRAIN) : ");
-        TypeTransport transporteur = TypeTransport.valueOf(scanner.next().toUpperCase());
+        TypeTransport transporteur = TypeTransport.valueOf(scanner.nextLine().toUpperCase());
 
         Trajet trajet = new Trajet(villeDepartId, villeArriveeId, dateDepart, dateArrivee, transporteur);
         try {
@@ -77,20 +83,25 @@ public class TrajetView {
     }
 
     private void modifierTrajet() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         System.out.print("ID du trajet à modifier : ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         System.out.print("Nouvelle ville de départ (ID) : ");
         int villeDepartId = scanner.nextInt();
         System.out.print("Nouvelle ville d'arrivée (ID) : ");
         int villeArriveeId = scanner.nextInt();
+        scanner.nextLine();
+
         System.out.print("Nouvelle date de départ (yyyy-MM-dd HH:mm:ss) : ");
-        LocalDateTime dateDepart = LocalDateTime.parse(scanner.next());
+        LocalDateTime dateDepart = LocalDateTime.parse(scanner.nextLine(), formatter);
         System.out.print("Nouvelle date d'arrivée (yyyy-MM-dd HH:mm:ss) : ");
-        LocalDateTime dateArrivee = LocalDateTime.parse(scanner.next());
+        LocalDateTime dateArrivee = LocalDateTime.parse(scanner.nextLine(), formatter);
+
         System.out.print("Nouveau transporteur (e.g., BUS, TRAIN) : ");
-        TypeTransport transporteur = TypeTransport.valueOf(scanner.next().toUpperCase());
+        TypeTransport transporteur = TypeTransport.valueOf(scanner.nextLine().toUpperCase());
 
         Trajet trajet = new Trajet(id, villeDepartId, villeArriveeId, dateDepart, dateArrivee, transporteur);
         try {
